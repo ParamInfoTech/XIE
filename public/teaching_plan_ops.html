@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <script src="/javascripts/angular.js"></script>
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/popper.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+    <div ng-app="teachingPlanApp" ng-controller="teachingPlanCtrl">
+        <div class="row mx-auto justify-content-center">
+            <h1>
+                This is Teaching Plan Management Page
+            </h1>
+        </div>
+        <form>
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="hidden" ng-model="_id">
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4>Lecture Number</h4>
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="text" ng-model="lectureNumber" required>
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4>Topic</h4>
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="text" ng-model="topic" required>
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4>Book Reference</h4>
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="text" ng-model="bookRef" required>
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4>Course Outcome</h4>
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="text" ng-model="co" required>
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4>Methodology</h4>
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="text" ng-model="methodology" required>
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4>Subject</h4>
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="text" ng-model="subject" required>
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4>Year</h4>
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <input type="text" ng-model="year" required>
+                </div>
+            </div>
+
+            <div class="row mx-auto justify-content-center">
+                <div class="col-4 col-md-3 col-lg-2">
+                </div>
+                <div class="col-4 col-md-3 col-lg-2">
+                    <h4> <button ng-click="save()" class="btn-primary">Save</button>
+                    <button ng-click="clear()" class="btn-primary">Clear</button> </h4>
+                </div>
+            </div>
+        </form>
+
+        <div class="row mx-auto justify-content-center">
+            <table border="2px">
+                <tr ng-repeat="plan in myData">
+                    <td> <h4> {{plan.lectureNumber}} </h4> </td>
+                    <td> <h4> {{plan.topic}} </h4> </td>
+                    <td> <h4> {{plan.bookRef}} </h4> </td>
+                    <td> <h4> {{plan.co}} </h4> </td>
+                    <td> <h4> {{plan.methodology}} </h4> </td>
+                    <td> <h4> {{plan.subject}} </h4> </td>
+                    <td> <h4> {{plan.year}} </h4> </td>
+                    <td> <h4> <button ng-click="edit(plan._id, plan.lectureNumber, plan.topic, plan.bookRef,
+                    plan.co, plan.methodology, plan.subject, plan.year)">Edit</button> </h4></td>
+                    <td> <h4> <button ng-click="delete(plan._id)">Delete</button> </h4></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let app = angular.module('teachingPlanApp', []);
+        app.controller('teachingPlanCtrl', function ($scope, $http) {
+            $http.get('http://localhost:3000/teaching_plan/get-teachingPlan').then( (response)=>{
+                console.log(response.data);
+                $scope.myData = response.data;
+            } );
+
+            $scope._id = '';
+            $scope.lectureNumber = '';
+            $scope.topic = '';
+            $scope.bookRef = '';
+            $scope.co = '';
+            $scope.methodology = '';
+            $scope.subject = '';
+            $scope.year = '';
+
+            $scope.edit = function(_id, lectureNumber, topic, bookRef, co, methodology, subject, year){
+                $scope._id = _id;
+                $scope.lectureNumber =  lectureNumber;
+                $scope.topic = topic;
+                $scope.bookRef = bookRef;
+                $scope.co = co;
+                $scope.methodology = methodology;
+                $scope.subject = subject;
+                $scope.year = year;
+            }
+
+            $scope.delete = function(_id){
+                const teachingPlan = {
+                    _id: _id
+                }
+                $http.post('http://localhost:3000/teaching_plan/delete-teachingPlan', teachingPlan).then( (response)=>{
+                    if(response.data.msg == 'Record Deleted'){
+                        console.log(response.data);
+                        alert('Record Deleted');
+                        $scope.myData = $scope.myData.filter(plan => plan._id != _id);
+                    } else{
+                        console.log(response.data);
+                        alert('Unable to Record Deleted');
+                    }
+                } );
+            }
+
+            $scope.save = function () {
+                if($scope._id.length > 0){
+                    alert('Edit Option');
+                    const teachingPlan = {
+                        _id: $scope._id,
+                        lectureNumber: $scope.lectureNumber,
+                        topic: $scope.topic,
+                        bookRef: $scope.bookRef,
+                        co: $scope.co,
+                        methodology: $scope.methodology,
+                        subject: $scope.subject,
+                        year: $scope.year
+                    }
+                    $http.post('http://localhost:3000/teaching_plan/update-teachingPlan', teachingPlan).then( (response)=>{
+                        if(response.data.msg == 'Record Updated'){
+                            console.log(response.data);
+                            alert('Record Updated');
+                            for(let i = 0; i < $scope.myData.length; i++){
+                                if($scope.myData[i]._id == $scope._id){
+                                    $scope.myData[i].lectureNumber = $scope.lectureNumber;
+                                    $scope.myData[i].topic = $scope.topic;
+                                    $scope.myData[i].bookRef = $scope.bookRef;
+                                    $scope.myData[i].co = $scope.co;
+                                    $scope.myData[i].methodology = $scope.methodology;
+                                    $scope.myData[i].subject = $scope.subject;
+                                    $scope.myData[i].year = $scope.year;
+                                }
+                            }
+                        }
+                    } );
+                }else{
+                    const teachingPlan = {
+                        _id: '',
+                        lectureNumber: $scope.lectureNumber,
+                        topic: $scope.topic,
+                        bookRef: $scope.bookRef,
+                        co: $scope.co,
+                        methodology: $scope.methodology,
+                        subject: $scope.subject,
+                        year: $scope.year
+                    }
+                    $http.post('http://localhost:3000/teaching_plan/add-teachingPlan', teachingPlan).then( (response)=>{
+                        if(response.data.msg == 'Record Added'){
+                            console.log(response.data);
+                            alert('Record Added');
+                            teachingPlan._id = response.data.obj._id;
+                            $scope.myData.push(teachingPlan);
+                        }
+                    } );
+                }
+            }
+
+            $scope.clear = function () {
+                $scope._id = '';
+                $scope.lectureNumber = '';
+                $scope.topic = '';
+                $scope.bookRef = '';
+                $scope.co = '';
+                $scope.methodology = '';
+                $scope.subject = '';
+                $scope.year = '';
+            }
+        });
+    </script>
+</body>
+</html>
